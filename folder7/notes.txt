@@ -1,0 +1,36 @@
+❯ so this data works on node level?, at node level it creates a new file, it is not connecting the file present locally?
+
+  Read 1 file
+
+Yes, you're understanding it correctly. Here's what's happening:
+
+hostPath works at the node level, not your local machine.
+
+- path: /mydata/emails.txt refers to a path on the Kubernetes node (the VM/machine running the pod), not your laptop where you wrote the YAML.
+- type: FileOrCreate means: if /mydata/emails.txt doesn't exist on that node, create an empty file there. That's why you're seeing a new (empty) file appear.
+- It is not mounting a file from your local Windows filesystem (C:\Users\saura\...) into the pod.
+
+Why your local file isn't conn
+1. If you're using Docker Desktop / Minikube / Kind, the "node" is a Linux VM. /mydata/
+lives inside that VM, not on W
+2. Even on Docker Desktop (which shares some Windows paths), you'd need a path like
+/run/desktop/mnt/host/c/Users/.. — not /mydata/.
+3. In a real multi-node cluster, hostPath is whichever node the pod gets scheduled on — so
+ it's generally a bad choice f
+
+If you want to use a file from
+
+┌────────────────────────────────────────────────────────┐
+│             Goal             │                                    Use               │
+├────────────────────────────────────────────────────────┤
+│ Inject small config/text     │ ConfigMap created with kubectl create configmap ...  │
+│ from local                                             │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│ Persist across pod restarts  but pre-place the file on │
+│ on same node                 │  the node                                            │
+├────────────────────────────────────────────────────────┤
+│ Share data across nodes /    │ PersistentVolume backed by NFS, cloud disk, etc.     │
+│ production                                             │
+└──────────────────────────────┴──────────────────────────────────────────────────────┘
+
+For your case (an emails.txt you want the app to read), a ConfigMap is usually the right answer if it's small/static. W
