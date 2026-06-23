@@ -1,0 +1,84 @@
+minikube start --driver=docker //make a single node cluster
+minikube delete
+minikube status
+minikube dashboard
+kubectl create deployment bittu-nginx --image=nginx:latest
+kubectl get deployments
+kubectl delete deployment bittu-nginx
+kubectl get pods
+kubectl describe pod
+kubectl logs my-web-kube-7d965fc649-57nc9
+kubectl expose deployment bittu-nginx --port=80 --type=LoadBalancer
+kubectl get services
+kubectl delete service my-web-kube
+minikube service my-web-kube
+kubectl set image deployment my-web-kube chapter-docker=saurabhedict/chapter-docker:v7
+//kubectl delete all --all //Stop everything in current namespace
+
+
+
+
+
+
+//ImagePullBackoff :
+
+kubectl set image deployment my-web-kube chapter-docker=saurabhedict/chapter-docker:v12 //v12 doesn't exist
+kubectl rollout status deployment my-web-kube //you can check status
+kubectl get pods
+kubectl rollout undo deployment my-web-kube
+kubectl get pods
+
+
+
+
+
+//self-Healing in K8s :
+
+//docker build -t express-demo-kube . 
+//docker push saurabhedict/express-demo-kube:v1 //image doesn't exist
+//docker tag express-demo-kube:latest saurabhedict/express-demo-kube:v1
+//docker images
+//docker push saurabhedict/express-demo-kube:v1
+//kubectl create deployment my-expree-demo-kube --image=saurabhedict/express-demo-kube:v1
+//kubectl get deployment
+//kubectl get pods
+//kubectl expose deployments my-expree-demo-kube --type=LoadBalancer --port=3000
+//kubectl logs my-expree-demo-kube-766b5d876d-zbctc  
+//minikube service my-expree-demo-kube
+
+
+
+
+
+
+
+//Scaling in K8s :
+
+//kubectl scale deployment my-expree-demo-kube --replicas=5   
+//kubectl get pods
+//kubectl scale deployment my-expree-demo-kube --replicas=4
+//kubectl get pods
+
+
+
+//yml file 
+
+kubectl apply -f deployment-express-node.yml
+kubectl apply -f service-express-demo.yml  
+minikube get services
+minikube service service-express-demo
+
+
+
+//running multiple containers :
+
+//docker run -p 27017:27017 -d --name mongodb mongo
+
+//docker pull philippaul/node-mongo-db:01
+//docker run -p 27017:27017 -d --network my-net mongo
+//docker run --network my-net -p 3000:3000 --name myapp philippaul/node-mongo-db:01
+
+
+//1)running multiple containers in a same pods :
+   folder4
+

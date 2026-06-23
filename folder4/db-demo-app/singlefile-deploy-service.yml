@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  # Unique key of the Deployment instance
+  name: my-demodb-kube
+
+spec:
+  # 3 Pods should exist at all times.
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: my-demodb
+
+  template:
+    metadata:
+      labels:
+        # Apply this label to pods and default
+        # the Deployment label selector to this value
+        app: my-demodb
+
+    spec:
+      containers:
+        - name: my-demodb-con
+          # Run this image
+          image: philippaul/node-mongo-db:02
+        - name: my-demodb-con-two
+          image: mongo:latest
+
+
+---
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  # Unique key of the Service instance
+  name: service-express-demodb
+
+spec:
+  ports:
+    # Accept traffic sent to port 80
+    - name: http
+      port: 8080
+      targetPort: 3000
+
+  selector:
+    # LoadBalance traffic across Pods matching
+    # this label selector
+    app: my-demodb
+
+  # Create an HA proxy in the cloud provider
+  # with an External IP address - *Only supported
+  # by some cloud providers*
+  type: LoadBalancer

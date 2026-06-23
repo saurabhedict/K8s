@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  # Unique key of the Deployment instance
+  name: my-demodb-kube
+
+spec:
+  # 3 Pods should exist at all times.
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: my-demodb
+
+  template:
+    metadata:
+      labels:
+        # Apply this label to pods and default
+        # the Deployment label selector to this value
+        app: my-demodb
+
+    spec:
+      containers:
+        - name: my-demodb-con
+          # Run this image
+          image: philippaul/node-mongo-db:02
+        - name: my-demodb-con-two
+          image: mongo:latest
